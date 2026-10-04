@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "id": "0ad1318b-5342-4540-922d-f71bd28d102a",
+    "slug": "mycalc1",
+    "name": "ماشین حساب",
+    "description": "ماشین حساب شبیه ویندوز",
+    "currentPlanRevision": 6
+  },
+  "repository": {
+    "provider": "github",
+    "fullName": "ostaddehdari/mycalc1",
+    "visibility": "public",
+    "defaultBranch": "main"
+  },
+  "metadata": {
+    "initializedBy": "core-automation"
+  }
+}

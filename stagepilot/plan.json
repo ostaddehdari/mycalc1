@@ -1,0 +1,1121 @@
+{
+  "schemaVersion": 1,
+  "projectId": "0ad1318b-5342-4540-922d-f71bd28d102a",
+  "revision": 6,
+  "plan": {
+    "stages": [
+      {
+        "id": "S01",
+        "title": "Repository Foundation و Contract Freeze",
+        "works": [
+          {
+            "id": "S01-W01",
+            "title": "Repository Baseline and Project Structure",
+            "weight": 1,
+            "dependsOn": [],
+            "objective": "بررسی وضعیت mycalc1 و ایجاد ساختار پایه Source، Assets، Tests، Docs و Ops بدون افزودن Runtime غیرضروری.",
+            "acceptanceCriteria": [
+              "Remote، Branch، HEAD و وضعیت اولیه Repository ثبت شوند.",
+              "ساختار حداقل شامل index.html، assets/css، assets/js، assets/vendor، tests، docs و ops باشد.",
+              ".gitignore فایل‌های Runtime، Cache، Test Artifacts، node_modules، Secrets و فایل‌های موقت را پوشش دهد.",
+              "هیچ Backend service، Database schema یا Queue component ایجاد نشود.",
+              "Static structure check و HTML/JavaScript smoke load اولیه Pass شود.",
+              "Diff بازبینی شود و هیچ Secret، Credential، Runtime socket، log، cache یا فایل موقت وارد Commit نشود.",
+              "فقط پس از Pass شدن Checks، Commit با پیام مخصوص S01-W01 ایجاد و Commit SHA ثبت شود.",
+              "Commit به GitHub Branch پیکربندی‌شده Push شود و Remote SHA دقیقاً با Local SHA برابر و ثبت شود."
+            ]
+          },
+          {
+            "id": "S01-W02",
+            "title": "Pinned Development and Vendored Dependencies",
+            "weight": 1,
+            "dependsOn": [
+              "S01-W01"
+            ],
+            "objective": "تثبیت نسخه Bootstrap، Bootstrap RTL، jQuery، Bootstrap Icons و ابزارهای Development/Test با Lockfile قابل بازتولید.",
+            "acceptanceCriteria": [
+              "نسخه دقیق Dependencyها در manifest/lockfile ثبت شود.",
+              "Production assets موردنیاز Bootstrap، jQuery و Icons در assets/vendor قابل سرو محلی باشند.",
+              "index.html برای Runtime به CDN خارجی اجباری وابسته نباشد.",
+              "Dependency install reproducibility check و asset existence check Pass شود.",
+              "هیچ Secret یا Machine-specific path در manifest، lockfile یا scripts وجود نداشته باشد.",
+              "Diff بازبینی شود و فقط فایل‌های موردنیاز Dependency Foundation Commit شوند.",
+              "پس از Pass تست‌ها Commit مخصوص S01-W02 ایجاد و SHA ثبت شود.",
+              "Commit Push شود و GitHub Remote SHA با Local SHA تطبیق و ثبت شود."
+            ]
+          },
+          {
+            "id": "S01-W03",
+            "title": "Calculator Behavior Contract",
+            "weight": 2,
+            "dependsOn": [
+              "S01-W02"
+            ],
+            "objective": "تثبیت رفتار دقیق Number Input، Decimal، Percentage، Operator Chaining، Repeated Equals، C، CE، Backspace، Division by Zero و Formatting به‌عنوان Specification قابل تست.",
+            "acceptanceCriteria": [
+              "Behavior matrix برای تمام FR-01 تا FR-08 تهیه شود.",
+              "رفتار 2 + 3 + 4 = به‌صورت صریح و بدون ابهام ثبت شود.",
+              "Percentage برای Addition/Subtraction و Multiplication/Division دارای Example و expected result باشد.",
+              "Repeated Equals دارای حداقل یک سناریوی مثبت و یک Edge Case باشد.",
+              "C و CE در وضعیت‌های مختلف محاسبه از یکدیگر تفکیک شوند.",
+              "Division by Zero و Recovery با C تعریف شده باشد.",
+              "Floating Point formatting برای نمونه‌هایی مانند 0.1 + 0.2 تعریف شود.",
+              "Contract validation script یا test-data schema check Pass شود.",
+              "Diff و فایل‌های جدید بررسی شوند و هیچ Secret یا Runtime artifact وجود نداشته باشد.",
+              "پس از Pass Checks Commit مخصوص S01-W03 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S01-W04",
+            "title": "Quality and Test Harness",
+            "weight": 2,
+            "dependsOn": [
+              "S01-W03"
+            ],
+            "objective": "راه‌اندازی QUnit، Playwright، ESLint و JavaScript checkJs/noEmit به‌عنوان Quality Gateهای قابل اجرای پروژه.",
+            "acceptanceCriteria": [
+              "Commandهای مشخص برای lint، checkJs، unit، e2e و full-test وجود داشته باشند.",
+              "QUnit runner حداقل یک Smoke Test موفق اجرا کند.",
+              "Playwright حداقل index.html را از Test Server باز و عنصر Root را پیدا کند.",
+              "ESLint بدون خطای بحرانی اجرا شود.",
+              "JavaScript checkJs/noEmit روی Source فعلی Pass شود.",
+              "Test output و evidence path قابل ثبت باشند و Test Artifacts غیرضروری توسط Git ignore شوند.",
+              "Diff بررسی شود و هیچ Secret، browser profile، trace حساس یا runtime file وارد Commit نشود.",
+              "پس از Pass تمام Checks Commit مخصوص S01-W04 ایجاد و SHA ثبت شود.",
+              "Commit به GitHub Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S01-W05",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S01-W01",
+              "S01-W02",
+              "S01-W03",
+              "S01-W04"
+            ],
+            "objective": "اعتبارسنجی کامل Foundation، Contract و Test Harness پیش از ورود به Calculator Engine.",
+            "acceptanceCriteria": [
+              "Repository structure checks Pass شوند.",
+              "Dependency reproducibility و vendored asset checks Pass شوند.",
+              "Behavior Contract بدون مورد unresolved بحرانی باشد.",
+              "lint، checkJs، QUnit smoke و Playwright smoke همگی Pass شوند.",
+              "Security grep برای eval، new Function و unsafe-eval روی Source Pass شود.",
+              "git status فقط تغییرات متعلق به Stage Exit Work را قبل از Commit نشان دهد و Secret/runtime files وجود نداشته باشند.",
+              "تمام Commitهای S01-W01 تا S01-W04 در GitHub Branch مقصد وجود داشته باشند.",
+              "Stage Exit evidence شامل test commands، نتایج، Commit SHAها و Remote SHAها ثبت شود.",
+              "پس از Pass کامل، Commit مخصوص S01-W05 ایجاد، Push و Remote SHA آن تأیید شود.",
+              "هر Failure مانع ورود رسمی به S02 باشد."
+            ]
+          }
+        ],
+        "weight": 3,
+        "objective": "ایجاد Foundation قابل بازتولید Repository، ابزارهای Quality/Test و قرارداد رفتاری رسمی نسخه 1 پیش از شروع پیاده‌سازی.",
+        "acceptanceCriteria": [
+          "ساختار Repository، ابزارهای توسعه و Test Harness قابل اجرا باشند.",
+          "تمام رفتارهای حساس Calculator به Testable Contract تبدیل شده باشند.",
+          "هیچ Backend، Database یا Queue خارج از Scope ایجاد نشده باشد.",
+          "تمام تست‌ها و Quality Checks مرحله Pass باشند.",
+          "تمام Commitهای Stage روی GitHub وجود داشته و Remote SHAها تأیید شده باشند."
+        ]
+      },
+      {
+        "id": "S02",
+        "title": "Calculator Engine",
+        "works": [
+          {
+            "id": "S02-W01",
+            "title": "State Model and Number Input",
+            "weight": 2,
+            "dependsOn": [
+              "S01-W05"
+            ],
+            "objective": "پیاده‌سازی State Model پایه، Reset، Number Input، Leading Zero و Decimal Input.",
+            "acceptanceCriteria": [
+              "State حداقل currentValue، previousValue، operator، waitingForOperand، lastOperation، memoryValue و errorState را مدیریت کند.",
+              "ورود 1،2،3 مقدار 123 تولید کند.",
+              "Leading Zero اضافی کنترل شود.",
+              "Decimal از صفر 0.x ایجاد کند و Decimal دوم برای همان Operand رد شود.",
+              "Engine برای Number Input به DOM وابسته نباشد.",
+              "QUnit تست‌های Number/Decimal/Reset Pass شوند.",
+              "lint و checkJs روی تغییرات Pass شوند.",
+              "Diff بازبینی و Secret/runtime artifacts حذف شوند.",
+              "پس از Pass تست‌ها Commit مخصوص S02-W01 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S02-W02",
+            "title": "Basic Arithmetic Operations",
+            "weight": 2,
+            "dependsOn": [
+              "S02-W01"
+            ],
+            "objective": "پیاده‌سازی Addition، Subtraction، Multiplication و Division بر مبنای State Model.",
+            "acceptanceCriteria": [
+              "2 + 3 = 5 باشد.",
+              "10 - 4 = 6 باشد.",
+              "6 × 7 = 42 باشد.",
+              "8 ÷ 2 = 4 باشد.",
+              "اعداد منفی و Decimal operandها در چهار عمل بدون State corruption کار کنند.",
+              "QUnit تست‌های چهار عمل و Regression Number Input Pass شوند.",
+              "lint و checkJs Pass شوند.",
+              "Diff بررسی و فایل‌های غیرمجاز حذف شوند.",
+              "Commit مخصوص S02-W02 پس از تست ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S02-W03",
+            "title": "Operator Chaining Repeated Equals and Percentage",
+            "weight": 3,
+            "dependsOn": [
+              "S02-W02"
+            ],
+            "objective": "پیاده‌سازی رفتار مصوب Operator Chaining، تغییر Operator، Repeated Equals و Percentage مطابق Contract مرحله S01.",
+            "acceptanceCriteria": [
+              "2 + 3 + 4 = دقیقاً نتیجه ثبت‌شده در Behavior Contract را تولید کند.",
+              "Operatorهای متوالی State را خراب نکنند.",
+              "تغییر Operator قبل از Operand بعدی مطابق Contract عمل کند.",
+              "Repeated Equals مطابق Test Matrix مصوب عمل کند.",
+              "Percentage در Addition/Subtraction و Multiplication/Division مطابق Contract عمل کند.",
+              "Percentage در State نامعتبر NaN خام ایجاد نکند.",
+              "تمام QUnit تست‌های Operator/Equals/Percentage و Regression قبلی Pass شوند.",
+              "lint و checkJs Pass شوند.",
+              "Diff Review و Secret/runtime check انجام شود.",
+              "Commit مخصوص S02-W03 ایجاد، SHA ثبت، Push و Remote SHA برابر Local SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S02-W04",
+            "title": "Sign Clear Backspace Error and Formatting",
+            "weight": 3,
+            "dependsOn": [
+              "S02-W03"
+            ],
+            "objective": "تکمیل Sign Toggle، C، CE، Backspace، Division-by-zero recovery و Result Formatting.",
+            "acceptanceCriteria": [
+              "5 با Sign Toggle به -5 و سپس 5 بازگردد.",
+              "Backspace روی 123 مقدار 12 و روی عدد تک‌رقمی مقدار 0 ایجاد کند.",
+              "C کل محاسبه و CE فقط ورودی جاری را مطابق Contract پاک کنند.",
+              "Division by Zero وارد Error State کنترل‌شده شود و Infinity خام تولید نکند.",
+              "C از Error State Recovery کامل انجام دهد.",
+              "NaN، Infinity و undefined هرگز به‌عنوان displayValue معتبر صادر نشوند.",
+              "0.1 + 0.2 با Formatting مصوب نمایش داده شود.",
+              "QUnit تست‌های Sign/C/CE/Backspace/Error/Formatting و Regression کامل Pass شوند.",
+              "lint و checkJs Pass شوند.",
+              "Diff و فایل‌ها بررسی شوند و سپس Commit مخصوص S02-W04 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S02-W05",
+            "title": "Engine Regression Matrix",
+            "weight": 2,
+            "dependsOn": [
+              "S02-W04"
+            ],
+            "objective": "ایجاد مجموعه تست جامع Engine برای Requirements محاسباتی و Edge Caseهای نسخه 1.",
+            "acceptanceCriteria": [
+              "هر Acceptance Criterion مربوط به FR-01 تا FR-08 حداقل یک Test Case مستقیم داشته باشد.",
+              "Regression Matrix شامل Positive، Negative و Edge Case باشد.",
+              "Engine test suite بدون DOM اجرا شود.",
+              "هیچ Test skipped یا expected-failure بدون Exception ثبت‌شده باقی نماند.",
+              "QUnit suite کامل Pass شود.",
+              "lint و checkJs Pass شوند.",
+              "Diff و test fixtures برای Secret/runtime data بررسی شوند.",
+              "Commit مخصوص S02-W05 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S02-W06",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S02-W01",
+              "S02-W02",
+              "S02-W03",
+              "S02-W04",
+              "S02-W05"
+            ],
+            "objective": "تأیید رسمی صحت و استقلال Calculator Engine.",
+            "acceptanceCriteria": [
+              "lint و checkJs کل Source Pass شوند.",
+              "QUnit Engine Suite و تمام Regression Testهای S01/S02 Pass شوند.",
+              "Security scan عدم استفاده از eval، new Function و unsafe-eval را تأیید کند.",
+              "Static dependency check تأیید کند Engine هیچ import یا reference به DOM/jQuery ندارد.",
+              "هیچ Critical/High defect باز باقی نماند.",
+              "Diff، git status و Secret/runtime exclusion بررسی شوند.",
+              "تمام Commitهای S02-W01 تا S02-W05 روی GitHub و با SHA مورد انتظار موجود باشند.",
+              "Stage Exit evidence شامل Test Summary و SHA map ثبت شود.",
+              "Commit مخصوص S02-W06 فقط پس از Pass کامل ایجاد، Push و Remote SHA تأیید شود.",
+              "هر Failure مانع ورود رسمی به S03 باشد."
+            ]
+          }
+        ],
+        "weight": 5,
+        "objective": "پیاده‌سازی هسته محاسبات مستقل از DOM با State Machine قابل تست و پوشش کامل Requirementهای محاسباتی.",
+        "acceptanceCriteria": [
+          "FR-01 تا FR-08 در Engine با تست خودکار پوشش داده شوند.",
+          "هیچ NaN، Infinity یا undefined خام از Engine به Presentation Layer نرسد.",
+          "Engine هیچ وابستگی مستقیم به DOM یا jQuery نداشته باشد.",
+          "تمام Unit و Regression Testهای Stage Pass باشند.",
+          "تمام Commitهای Stage روی GitHub تأیید شده باشند."
+        ]
+      },
+      {
+        "id": "S03",
+        "title": "Windows-like Frontend and Responsive UX",
+        "works": [
+          {
+            "id": "S03-W01",
+            "title": "Calculator Shell and Dual Display",
+            "weight": 2,
+            "dependsOn": [
+              "S02-W06"
+            ],
+            "objective": "ساخت HTML Semantic، Calculator shell و Display دو سطحی Expression/Primary Value با مقدار اولیه 0.",
+            "acceptanceCriteria": [
+              "Calculator root، header/control area و dual display وجود داشته باشند.",
+              "Expression و Primary Value از نظر بصری تفکیک شوند.",
+              "مقدار اولیه Primary Display برابر 0 باشد.",
+              "عدد طولانی بدون شکستن Layout مدیریت شود.",
+              "HTML validation، lint/checkJs و Playwright DOM smoke Pass شوند.",
+              "Diff و asset references بررسی شوند و Secret/runtime file وجود نداشته باشد.",
+              "Commit مخصوص S03-W01 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S03-W02",
+            "title": "Standard Keypad Memory Bar and History Surface",
+            "weight": 2,
+            "dependsOn": [
+              "S03-W01"
+            ],
+            "objective": "ساخت Keypad کامل، Memory Controls و History Panel shell مطابق Scope نسخه 1.",
+            "acceptanceCriteria": [
+              "دکمه‌های 0 تا 9، Decimal، +، -، ×، ÷، =، %, +/-, C، CE و Backspace وجود داشته باشند.",
+              "MC، MR، MS، M+ و M- در Memory Bar وجود داشته باشند.",
+              "History Panel و Clear History control وجود داشته باشند.",
+              "هر کنترل Action identifier یکتا و معتبر داشته باشد.",
+              "هیچ Inline onclick یا handler مشابه وجود نداشته باشد.",
+              "Playwright structural UI tests و HTML checks Pass شوند.",
+              "Diff Review انجام و Commit مخصوص S03-W02 پس از تست ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S03-W03",
+            "title": "Responsive Layout and Touch Targets",
+            "weight": 2,
+            "dependsOn": [
+              "S03-W02"
+            ],
+            "objective": "تکمیل Responsive behavior در Mobile، Tablet و Desktop با Touch-friendly controls.",
+            "acceptanceCriteria": [
+              "Viewport 320px بدون Horizontal Overflow ناخواسته باشد.",
+              "Viewport 768px Layout سالم داشته باشد.",
+              "Viewport 1440px Calculator بیش از حد کشیده نشود.",
+              "Touch targetهای اصلی تقریباً 44px یا بیشتر و قابل استفاده باشند.",
+              "History در Mobile فضای Keypad را غیرقابل استفاده نکند و به Panel/Drawer مناسب تبدیل شود.",
+              "Playwright viewport tests Pass شوند.",
+              "CSS lint/style sanity checks و Diff Review Pass شوند.",
+              "Commit مخصوص S03-W03 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S03-W04",
+            "title": "Light and Dark Theme",
+            "weight": 1,
+            "dependsOn": [
+              "S03-W03"
+            ],
+            "objective": "پیاده‌سازی Theme tokens و Light/Dark UI بدون وابستگی به Calculator State.",
+            "acceptanceCriteria": [
+              "Light و Dark Theme قابل انتخاب باشند.",
+              "Theme change بدون Reload انجام شود.",
+              "Theme switching هیچ Calculator Engine reset را فراخوانی نکند.",
+              "متن، Display و Buttons در هر دو Theme خوانا باشند.",
+              "Playwright theme toggle test و snapshot/screenshot evidence در Viewportهای اصلی Pass شود.",
+              "Diff و CSS بررسی و Secret/runtime artifacts حذف شوند.",
+              "Commit مخصوص S03-W04 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S03-W05",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S03-W01",
+              "S03-W02",
+              "S03-W03",
+              "S03-W04"
+            ],
+            "objective": "تأیید کامل Presentation Layer و Responsive UX پیش از اتصال Interaction Layer.",
+            "acceptanceCriteria": [
+              "lint، checkJs، QUnit Regression و Playwright UI smoke همگی Pass شوند.",
+              "Responsive tests در 320px، 768px و 1440px Pass شوند.",
+              "Light/Dark checks Pass شوند.",
+              "Security check عدم وجود inline handlers و unsafe patterns را تأیید کند.",
+              "هیچ Critical/High UI defect باز نباشد.",
+              "Diff و git status بررسی شوند و Secret/runtime files وجود نداشته باشند.",
+              "تمام Commitهای S03 روی GitHub تأیید شوند.",
+              "Stage evidence شامل screenshots/test reports/SHA map ثبت شود.",
+              "Commit مخصوص S03-W05 ایجاد، Push و Remote SHA تأیید شود.",
+              "Failure هر Gate مانع شروع رسمی S04 باشد."
+            ]
+          }
+        ],
+        "weight": 4,
+        "objective": "ساخت Presentation Layer حرفه‌ای، Responsive و قابل توسعه برای Standard Calculator بدون قرار دادن Logic ریاضی در DOM.",
+        "acceptanceCriteria": [
+          "FR-09، FR-13 و FR-14 از نظر UI آماده و قابل تست باشند.",
+          "Keypad، Display، Memory Bar و History surface کامل باشند.",
+          "رابط در 320px، 768px و 1440px بدون شکست اساسی باشد.",
+          "Light/Dark Theme بدون Reset State طراحی شده باشد.",
+          "تمام Commitهای Stage روی GitHub تأیید شده باشند."
+        ]
+      },
+      {
+        "id": "S04",
+        "title": "Interaction Keyboard and Accessibility",
+        "works": [
+          {
+            "id": "S04-W01",
+            "title": "jQuery Action Binding",
+            "weight": 2,
+            "dependsOn": [
+              "S03-W05"
+            ],
+            "objective": "ایجاد Interaction Layer با Event Delegation و اتصال Button Actionها به Calculator Engine.",
+            "acceptanceCriteria": [
+              "Number، operator و control buttons از Event Delegation مرکزی استفاده کنند.",
+              "هیچ منطق محاسباتی در click handlerها تکرار نشود.",
+              "Button actions به Engine Action API نگاشت شوند.",
+              "Click flow 2 + 3 = مقدار 5 تولید کند.",
+              "Integration tests و QUnit Regression Pass شوند.",
+              "lint/checkJs Pass شوند.",
+              "Diff و Secret/runtime check انجام شود.",
+              "Commit مخصوص S04-W01 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S04-W02",
+            "title": "Keyboard Mapping and Visual Feedback",
+            "weight": 2,
+            "dependsOn": [
+              "S04-W01"
+            ],
+            "objective": "پیاده‌سازی Keyboard/Numpad mapping و بازخورد بصری دکمه متناظر.",
+            "acceptanceCriteria": [
+              "0 تا 9، +، -، *, /، Enter، =، Backspace و Escape کار کنند.",
+              "Keyboard flow 2 + 3 = مقدار 5 بدهد.",
+              "Backspace یک رقم را حذف و Escape عملیات Clear را انجام دهد.",
+              "فشار Keyboard دکمه متناظر را موقتاً Active نشان دهد.",
+              "Keyboard handler در input/editable غیرمرتبط Host دخالت نکند.",
+              "Playwright keyboard tests و Regression Pass شوند.",
+              "Diff و فایل‌های خروجی بررسی شوند.",
+              "Commit مخصوص S04-W02 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S04-W03",
+            "title": "State-driven Rendering and Error Feedback",
+            "weight": 2,
+            "dependsOn": [
+              "S04-W02"
+            ],
+            "objective": "همگام‌سازی Expression، Primary Display، button states و Error message با State Engine.",
+            "acceptanceCriteria": [
+              "هر تغییر Engine State از یک Render path واحد به UI منتقل شود.",
+              "Expression و Primary Value با Engine همگام باشند.",
+              "Division by Zero پیام کاربرپسند نمایش دهد و Infinity خام دیده نشود.",
+              "NaN و undefined در DOM ظاهر نشوند.",
+              "Recovery با C در UI کار کند.",
+              "Integration/E2E error tests Pass شوند.",
+              "Diff Review، lint/checkJs و Secret check Pass شوند.",
+              "Commit مخصوص S04-W03 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S04-W04",
+            "title": "Accessibility and Focus Semantics",
+            "weight": 2,
+            "dependsOn": [
+              "S04-W03"
+            ],
+            "objective": "تکمیل Keyboard navigation، Focus visibility، Accessible Labels، aria-live و Touch accessibility.",
+            "acceptanceCriteria": [
+              "تمام کنترل‌های اصلی با Tab قابل دسترسی باشند.",
+              "Focus state واضح باشد.",
+              "Icon-only controls Accessible Label داشته باشند.",
+              "Primary Display یا status مناسب دارای aria-live کنترل‌شده باشد.",
+              "هیچ قابلیت اصلی فقط با Hover قابل استفاده نباشد.",
+              "Automated accessibility smoke checks و Playwright keyboard navigation tests Pass شوند.",
+              "Diff، lint/checkJs و Secret/runtime checks Pass شوند.",
+              "Commit مخصوص S04-W04 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S04-W05",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S04-W01",
+              "S04-W02",
+              "S04-W03",
+              "S04-W04"
+            ],
+            "objective": "تأیید کامل Interaction، Keyboard و Accessibility بدون Regression در Engine یا UI.",
+            "acceptanceCriteria": [
+              "lint و checkJs Pass شوند.",
+              "QUnit کامل S01-S04 Pass شود.",
+              "Playwright click، keyboard، error recovery و accessibility smoke tests Pass شوند.",
+              "Security checks برای inline handlers، eval و unsafe patterns Pass شوند.",
+              "هیچ Critical/High defect باز باقی نماند.",
+              "Diff و git status پاکیزگی مورد انتظار و exclusion فایل‌های حساس را تأیید کنند.",
+              "تمام Commitهای S04 روی GitHub و با Remote SHA صحیح موجود باشند.",
+              "Stage evidence ثبت شود.",
+              "Commit مخصوص S04-W05 ایجاد، Push و Remote SHA تأیید شود.",
+              "Failure هر Gate مانع شروع رسمی S05 باشد."
+            ]
+          }
+        ],
+        "weight": 4,
+        "objective": "اتصال UI به Engine از طریق jQuery، پشتیبانی کامل Mouse/Touch/Keyboard و تکمیل Accessibility پایه.",
+        "acceptanceCriteria": [
+          "FR-12 و FR-16 کامل شوند.",
+          "تمام کلیدهای UI و Keyboard از یک مسیر Action کنترل‌شده استفاده کنند.",
+          "Display فقط از State Engine Render شود.",
+          "Focus، labels و aria-live قابل تست باشند.",
+          "تمام Commitهای Stage روی GitHub تأیید شده باشند."
+        ]
+      },
+      {
+        "id": "S05",
+        "title": "Memory History and Local Persistence",
+        "works": [
+          {
+            "id": "S05-W01",
+            "title": "Memory Engine and UI Integration",
+            "weight": 2,
+            "dependsOn": [
+              "S04-W05"
+            ],
+            "objective": "پیاده‌سازی MS، MR، MC، M+ و M- و اتصال آن‌ها به Memory Bar.",
+            "acceptanceCriteria": [
+              "MS مقدار جاری را ذخیره کند.",
+              "MR مقدار ذخیره‌شده را بازیابی کند.",
+              "MC Memory را پاک کند.",
+              "M+ و M- مقدار Memory را به‌درستی تغییر دهند.",
+              "وجود Memory در UI قابل تشخیص باشد.",
+              "QUnit Memory tests و Playwright Memory flow Pass شوند.",
+              "lint/checkJs و Diff Review Pass شوند.",
+              "Commit مخصوص S05-W01 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S05-W02",
+            "title": "History Model and Panel",
+            "weight": 2,
+            "dependsOn": [
+              "S05-W01"
+            ],
+            "objective": "ثبت Expression/Result محاسبات موفق، محدودسازی History و تکمیل History Panel.",
+            "acceptanceCriteria": [
+              "هر محاسبه موفق یک History Entry شامل Expression و Result ایجاد کند.",
+              "حداقل 50 Entry اخیر نگهداری شوند و سیاست حذف موارد قدیمی مشخص باشد.",
+              "Error result به‌عنوان محاسبه موفق ثبت نشود.",
+              "Clear History تمام Entryها را پاک کند.",
+              "History Panel در Desktop و Mobile قابل استفاده باشد.",
+              "Unit/Integration/E2E History tests Pass شوند.",
+              "Diff، lint/checkJs و Secret check Pass شوند.",
+              "Commit مخصوص S05-W02 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S05-W03",
+            "title": "Resilient localStorage Adapter",
+            "weight": 2,
+            "dependsOn": [
+              "S05-W02"
+            ],
+            "objective": "ایجاد Adapter جداگانه و امن برای Theme و History با Validation و Recovery از داده خراب.",
+            "acceptanceCriteria": [
+              "Persistence دسترسی مستقیم پراکنده به localStorage در UI ایجاد نکند.",
+              "History و Theme schema/version مشخص داشته باشند.",
+              "JSON خراب یا داده ناسازگار باعث Crash برنامه نشود و به Default امن برگردد.",
+              "هیچ Credential، Token یا داده حساس در localStorage نوشته نشود.",
+              "Unit tests برای save/load/corruption/clear Pass شوند.",
+              "lint/checkJs و Security source check Pass شوند.",
+              "Diff Review انجام و Commit مخصوص S05-W03 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S05-W04",
+            "title": "Persistence UX Integration",
+            "weight": 1,
+            "dependsOn": [
+              "S05-W03"
+            ],
+            "objective": "بازیابی Theme و History در Reload و هماهنگی Clear History با Storage بدون Reset ناخواسته Calculator State.",
+            "acceptanceCriteria": [
+              "Theme بعد از Reload بازیابی شود.",
+              "History بعد از Reload بازیابی شود.",
+              "Clear History داده Persisted را نیز حذف کند.",
+              "تغییر Theme Calculator State را Reset نکند.",
+              "Storage failure شبیه‌سازی‌شده برنامه را غیرقابل استفاده نکند.",
+              "Playwright persistence/reload tests Pass شوند.",
+              "Diff و Quality Checks Pass شوند.",
+              "Commit مخصوص S05-W04 ایجاد، SHA ثبت، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S05-W05",
+            "title": "Memory History Persistence Regression Suite",
+            "weight": 1,
+            "dependsOn": [
+              "S05-W04"
+            ],
+            "objective": "ایجاد پوشش Regression کامل برای تمام Stateهای Memory، History و Persistence.",
+            "acceptanceCriteria": [
+              "تمام Acceptance Criteria FR-10، FR-11 و FR-15 Test Case مستقیم داشته باشند.",
+              "حد 50 History Entry و eviction policy تست شود.",
+              "Corrupt storage و storage unavailable سناریو داشته باشند.",
+              "Memory tests مستقل از History و Persistence قابل اجرا باشند.",
+              "QUnit و Playwright regression suite کامل Pass شود.",
+              "Diff، lint/checkJs و Secret/runtime checks Pass شوند.",
+              "Commit مخصوص S05-W05 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S05-W06",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S05-W01",
+              "S05-W02",
+              "S05-W03",
+              "S05-W04",
+              "S05-W05"
+            ],
+            "objective": "تأیید کامل State persistence قابلیت‌های نسخه 1 بدون Regression.",
+            "acceptanceCriteria": [
+              "lint و checkJs Pass شوند.",
+              "QUnit full suite Pass شود.",
+              "Playwright Memory/History/Persistence و Regression flows Pass شوند.",
+              "Security check تأیید کند هیچ داده حساس در localStorage یا test fixtures وجود ندارد.",
+              "Responsive regression برای History Panel Pass شود.",
+              "هیچ Critical/High defect باز نباشد.",
+              "Diff و git status بررسی شوند.",
+              "تمام Commitهای S05 روی GitHub تأیید شوند.",
+              "Commit مخصوص S05-W06 پس از ثبت evidence ایجاد، Push و Remote SHA تأیید شود.",
+              "Failure هر Gate مانع ورود رسمی به S06 باشد."
+            ]
+          }
+        ],
+        "weight": 4,
+        "objective": "تکمیل Memory، History حداقل 50 مورد و Persistence مقاوم در localStorage بدون افزودن Backend یا Database سروری.",
+        "acceptanceCriteria": [
+          "FR-10، FR-11 و FR-15 کامل شوند.",
+          "Memory و History در Engine/UI به‌صورت قابل تست کار کنند.",
+          "localStorage corruption موجب Crash نشود.",
+          "هیچ داده حساس ذخیره نشود.",
+          "تمام Commitهای Stage روی GitHub تأیید شوند."
+        ]
+      },
+      {
+        "id": "S06",
+        "title": "Quality Security and Cross-browser Hardening",
+        "works": [
+          {
+            "id": "S06-W01",
+            "title": "Critical End-to-End User Flows",
+            "weight": 2,
+            "dependsOn": [
+              "S05-W06"
+            ],
+            "objective": "تکمیل Playwright E2E برای مسیرهای حیاتی Calculator نسخه 1.",
+            "acceptanceCriteria": [
+              "Mouse flow 2 + 3 = 5 Pass شود.",
+              "Keyboard flow 2 + 3 = 5 Pass شود.",
+              "C، CE و Backspace flow Pass شوند.",
+              "Percentage و Repeated Equals flow طبق Contract Pass شوند.",
+              "Division-by-zero و Recovery flow Pass شوند.",
+              "Memory، History، Theme و Persistence flow Pass شوند.",
+              "هیچ Console error بحرانی در E2E ثبت نشود.",
+              "Diff/trace artifacts بررسی و Secrets حذف شوند.",
+              "Commit مخصوص S06-W01 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S06-W02",
+            "title": "Responsive and Cross-browser Matrix",
+            "weight": 2,
+            "dependsOn": [
+              "S06-W01"
+            ],
+            "objective": "اعتبارسنجی Layout و Critical Flows در Viewportها و Browserهای هدف.",
+            "acceptanceCriteria": [
+              "320px، 768px و 1440px بدون Horizontal Overflow ناخواسته باشند.",
+              "Critical flows در Chromium/Chrome و Firefox Pass شوند.",
+              "Edge smoke/E2E در محیط دارای Edge اجرا و evidence ثبت شود؛ نبود محیط Edge بدون Exception ثبت‌شده Stage را Pass نکند.",
+              "Touch interaction روی Mobile viewport قابل استفاده باشد.",
+              "Screenshot evidence برای Light/Dark در Mobile و Desktop ثبت شود.",
+              "هیچ Browser-specific Critical/High defect باقی نماند.",
+              "Diff و generated screenshots/traces طبق policy از Git خارج شوند مگر evidence منتخب.",
+              "Commit مخصوص S06-W02 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S06-W03",
+            "title": "CSP and Static Security Hardening",
+            "weight": 2,
+            "dependsOn": [
+              "S06-W02"
+            ],
+            "objective": "حذف الگوهای ناامن، آماده‌سازی CSP و اطمینان از اجرای برنامه بدون unsafe-eval.",
+            "acceptanceCriteria": [
+              "Source scan هیچ eval یا new Function پیدا نکند.",
+              "هیچ setTimeout/setInterval مبتنی بر JavaScript string وجود نداشته باشد.",
+              "هیچ Inline Event Handler برای منطق اصلی وجود نداشته باشد.",
+              "CSP آزمایشی بدون unsafe-eval برنامه و Test Smoke را نشکند.",
+              "Dynamic DOM updates برای داده‌های متغیر از APIهای text-safe استفاده کنند مگر مورد مستند امن.",
+              "Dependency versions pinned و Production runtime assets local باشند.",
+              "Security checks و E2E تحت CSP Pass شوند.",
+              "Diff Review انجام و Commit مخصوص S06-W03 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S06-W04",
+            "title": "Performance Event and Asset Hardening",
+            "weight": 1,
+            "dependsOn": [
+              "S06-W03"
+            ],
+            "objective": "بررسی Event Listener duplication، Asset integrity، Runtime errors و رفتار سریع UI.",
+            "acceptanceCriteria": [
+              "Repeated initialization listenerهای تکراری ایجاد نکند.",
+              "هیچ Loop/Timer دائمی غیرضروری وجود نداشته باشد.",
+              "همه Runtime asset references موجود و بدون 404 در Test Server باشند.",
+              "Rapid input stress scenario State را خراب نکند.",
+              "Calculator interaction در محیط تست Delay غیرعادی یا UI freeze ایجاد نکند.",
+              "Automated asset check، stress test و E2E Regression Pass شوند.",
+              "Diff/Secret/runtime check Pass شود.",
+              "Commit مخصوص S06-W04 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S06-W05",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S06-W01",
+              "S06-W02",
+              "S06-W03",
+              "S06-W04"
+            ],
+            "objective": "ایجاد Quality Gate نهایی پیش از Release Packaging و Deployment Engineering.",
+            "acceptanceCriteria": [
+              "lint و checkJs Pass شوند.",
+              "QUnit full regression Pass شود.",
+              "Playwright critical E2E، responsive و browser matrix Pass شوند.",
+              "Security suite و CSP smoke Pass شوند.",
+              "Asset integrity و rapid-input regression Pass شوند.",
+              "هیچ Critical/High defect یا unresolved security finding باقی نماند.",
+              "Diff، git status و Secret/runtime exclusion تأیید شوند.",
+              "تمام Commitهای S06 روی GitHub وجود داشته باشند و SHAها ثبت شده باشند.",
+              "Commit مخصوص S06-W05 ایجاد، Push و Remote SHA تأیید شود.",
+              "Failure هر Gate مانع شروع رسمی S07 باشد."
+            ]
+          }
+        ],
+        "weight": 4,
+        "objective": "تثبیت کیفیت نسخه Release Candidate از طریق E2E جامع، Cross-browser، Responsive، Security و Performance/Listener Hardening.",
+        "acceptanceCriteria": [
+          "تمام Requirementهای Functional و Non-functional دارای Evidence قابل بررسی باشند.",
+          "CSP-compatible بودن Source تأیید شود.",
+          "Critical flows در Browserهای هدف تا حد محیط قابل اجرا Pass شوند.",
+          "هیچ Critical/High defect باز باقی نماند.",
+          "تمام Commitهای Stage روی GitHub تأیید شوند."
+        ]
+      },
+      {
+        "id": "S07",
+        "title": "Release Engineering and Deployment Readiness",
+        "works": [
+          {
+            "id": "S07-W01",
+            "title": "Production Static Package",
+            "weight": 2,
+            "dependsOn": [
+              "S06-W05"
+            ],
+            "objective": "ساخت Artifact Static نسخه Release Candidate با asset pathهای سازگار با Base Path و بدون وابستگی Runtime به Node.js/CDN.",
+            "acceptanceCriteria": [
+              "Artifact شامل index.html و فقط CSS/JS/vendor/icon/runtime assets لازم باشد.",
+              "Test source، node_modules، Playwright traces، logs و Secrets وارد Artifact نشوند.",
+              "Asset pathها تحت /StagePilot/mycalc1/ صحیح resolve شوند.",
+              "Artifact روی Static Test Server بدون Node application runtime کار کند.",
+              "HTTP asset checks و Playwright smoke روی packaged artifact Pass شوند.",
+              "Artifact checksum و source Commit SHA ثبت شود.",
+              "Diff Review انجام و Commit مخصوص S07-W01 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S07-W02",
+            "title": "Nginx Static Route and Health Check Configuration",
+            "weight": 2,
+            "dependsOn": [
+              "S07-W01"
+            ],
+            "objective": "ایجاد و اعتبارسنجی Nginx configuration برای مسیر عمومی برنامه، HTTPS/base-path behavior، cache/security headers و Health Check بدون تغییر Production.",
+            "acceptanceCriteria": [
+              "Route هدف /StagePilot/mycalc1/ به Static release/current path نگاشت شود.",
+              "Static routing به‌جای Reverse Proxy انتخاب شود و عدم نیاز به upstream مستند باشد.",
+              "Route دقیق /StagePilot/mycalc1/healthz پاسخ 200 ساده و قابل مانیتور ارائه دهد.",
+              "تنظیم موجود HTTPS/TLS Host حفظ شود و Configuration هیچ TLS directive موجودی را ناخواسته overwrite نکند.",
+              "Direct access و trailing-slash/base-path behavior تعریف شده باشد.",
+              "Cache policy برای versioned/static assets و no-cache مناسب برای HTML/healthz تعریف شود.",
+              "CSP و security headers با برنامه سازگار باشند.",
+              "Nginx syntax validation روی config قابل اعمال Pass شود یا در محیط غیر-Nginx با validated template test بررسی شود.",
+              "Diff و Secret/path leakage check Pass شود.",
+              "Commit مخصوص S07-W02 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S07-W03",
+            "title": "Versioned Deploy and Rollback Tooling",
+            "weight": 2,
+            "dependsOn": [
+              "S07-W02"
+            ],
+            "objective": "ساخت روش Deploy نسخه‌بندی‌شده و Rollback امن با release directory و current symlink.",
+            "acceptanceCriteria": [
+              "هر Deploy در release directory یکتا مبتنی بر version/Commit SHA قرار گیرد.",
+              "current symlink به‌صورت atomic قابل جابه‌جایی باشد.",
+              "Deployment script قبل از switch checksum و required files را بررسی کند.",
+              "Rollback بتواند current را به Release قبلی برگرداند.",
+              "Scriptها از hardcoded Secret و Credential خالی باشند.",
+              "Dry-run یا sandbox deploy/rollback test Pass شود.",
+              "Shell/static checks و Diff Review Pass شوند.",
+              "Commit مخصوص S07-W03 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S07-W04",
+            "title": "Operations and Release Runbook",
+            "weight": 1,
+            "dependsOn": [
+              "S07-W03"
+            ],
+            "objective": "مستندسازی اجرای Local، Tests، Release، Nginx validation، Deployment، Health Check، Smoke Test و Rollback.",
+            "acceptanceCriteria": [
+              "README اجرای Local و Test commands را مستند کند.",
+              "Runbook شامل preflight، backup/current target capture، nginx -t، reload، healthz، public smoke و rollback باشد.",
+              "مسیر عمومی https://srun.ir/StagePilot/mycalc1/ و healthz در Runbook مشخص باشد.",
+              "Runbook توضیح دهد Production Runtime به Node.js server، Backend، Database یا Queue نیاز ندارد.",
+              "Documentation link/path validation و command syntax checks Pass شوند.",
+              "Diff و Secret review Pass شود.",
+              "Commit مخصوص S07-W04 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S07-W05",
+            "title": "Release Candidate Full Verification",
+            "weight": 2,
+            "dependsOn": [
+              "S07-W04"
+            ],
+            "objective": "اجرای تمام Quality Gates روی Artifact دقیق Release Candidate پیش از Production.",
+            "acceptanceCriteria": [
+              "lint و checkJs Pass شوند.",
+              "QUnit full suite Pass شود.",
+              "Playwright full critical suite روی packaged artifact Pass شود.",
+              "Responsive، keyboard، Memory، History، persistence، theme و error flows Pass شوند.",
+              "Security/CSP checks Pass شوند.",
+              "Artifact checksum و Commit SHA منبع ثبت شوند.",
+              "هیچ Critical/High defect باز نماند.",
+              "Diff/git status/Secret-runtime review Pass شود.",
+              "Commit مخصوص S07-W05 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S07-W06",
+            "title": "Stage Exit Verification",
+            "weight": 1,
+            "dependsOn": [
+              "S07-W01",
+              "S07-W02",
+              "S07-W03",
+              "S07-W04",
+              "S07-W05"
+            ],
+            "objective": "تأیید Deployment Readiness بدون اعمال تغییر Production.",
+            "acceptanceCriteria": [
+              "Release Candidate checksum، source SHA و GitHub SHA سازگار باشند.",
+              "lint، checkJs، QUnit، E2E، responsive، security و packaged HTTP smoke همگی Pass شوند.",
+              "Nginx config syntax/template validation Pass شود.",
+              "Deploy و rollback dry-run evidence موجود باشد.",
+              "Runbook کامل و قابل اجرا باشد.",
+              "Diff و Secret/runtime exclusion بررسی شوند.",
+              "تمام Commitهای S07 روی GitHub موجود و تأیید شده باشند.",
+              "Commit مخصوص S07-W06 فقط پس از Pass کامل ایجاد، Push و Remote SHA تأیید شود.",
+              "هر Failure مانع Production Deployment در S08 باشد."
+            ]
+          }
+        ],
+        "weight": 4,
+        "objective": "ایجاد Artifact Production، Nginx static routing template، Health Check، Deployment/Rollback tooling و Runbook پیش از تغییر Production.",
+        "acceptanceCriteria": [
+          "Production package فقط Runtime assets لازم را شامل شود.",
+          "Base-path /StagePilot/mycalc1/ به‌درستی پشتیبانی شود.",
+          "Nginx config قابل اعتبارسنجی و دارای Health Check باشد.",
+          "Deployment و Rollback procedure قابل اجرا و مستند باشند.",
+          "تمام Commitهای Stage روی GitHub تأیید شوند."
+        ]
+      },
+      {
+        "id": "S08",
+        "title": "Production Deployment Final Verification and Acceptance",
+        "works": [
+          {
+            "id": "S08-W01",
+            "title": "Production Preflight and Rollback Point",
+            "weight": 1,
+            "dependsOn": [
+              "S07-W06"
+            ],
+            "objective": "بررسی Production، Route conflict، Nginx state، Disk/permissions و ثبت Rollback point پیش از هر تغییر.",
+            "acceptanceCriteria": [
+              "وجود و مالکیت Repository/Artifact موردنظر تأیید شود.",
+              "Route /StagePilot/mycalc1/ از نظر تعارض با سرویس موجود بررسی شود و در صورت conflict Deployment متوقف شود.",
+              "Nginx current config و server block هدف Backup/Reference قابل بازیابی داشته باشند.",
+              "current release target قبلی در صورت وجود ثبت شود.",
+              "Disk space، permissions و release directory readiness تأیید شوند.",
+              "nginx -t قبل از تغییر Pass شود.",
+              "GitHub Remote SHA نسخه Release Candidate با Local SHA برابر باشد.",
+              "Diff Review و Secret/runtime exclusion انجام شود.",
+              "Commit مخصوص S08-W01 برای preflight evidence/config metadata غیرحساس ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S08-W02",
+            "title": "Production Deployment and Public Route",
+            "weight": 3,
+            "dependsOn": [
+              "S08-W01"
+            ],
+            "objective": "استقرار Artifact نسخه‌بندی‌شده، ایجاد صفحه عمومی، اعمال Nginx static route، Health Check، حفظ HTTPS/base-path و اجرای HTTP Smoke Test.",
+            "acceptanceCriteria": [
+              "Artifact دقیق Release Candidate در release directory مبتنی بر Commit SHA نصب شود.",
+              "current symlink به Release جدید به‌صورت atomic اشاره کند.",
+              "Nginx static route برای /StagePilot/mycalc1/ فعال شود و هیچ Reverse Proxy غیرضروری ایجاد نشود.",
+              "HTTPS موجود srun.ir حفظ شود و HTTP/HTTPS behavior با سیاست فعلی Host ناسازگار نشود.",
+              "nginx -t پس از تغییر Pass شود.",
+              "Nginx reload بدون Error انجام شود.",
+              "https://srun.ir/StagePilot/mycalc1/ پاسخ موفق و HTML صحیح ارائه دهد.",
+              "https://srun.ir/StagePilot/mycalc1/healthz پاسخ HTTP 200 ارائه دهد.",
+              "CSS، JavaScript، vendor و icon assets اصلی از Public URL پاسخ 200/304 و Content-Type صحیح داشته باشند.",
+              "Reload مستقیم Public Route خطای 404 ایجاد نکند.",
+              "CSP و security headers فعال، معتبر و بدون شکستن صفحه باشند.",
+              "HTTP smoke evidence شامل status codes، headers، deployed release SHA و timestamp ثبت شود.",
+              "هیچ Secret یا runtime credential در config commit نشود.",
+              "پس از Pass تست‌ها تغییرات Repository مربوط به Deployment metadata/runbook evidence Commit، Push و Remote SHA تأیید شوند."
+            ]
+          },
+          {
+            "id": "S08-W03",
+            "title": "Public HTTPS End-to-End Verification",
+            "weight": 2,
+            "dependsOn": [
+              "S08-W02"
+            ],
+            "objective": "اجرای E2E روی URL واقعی Production و تأیید Critical User Flows در نسخه عمومی.",
+            "acceptanceCriteria": [
+              "Public Playwright smoke صفحه را از HTTPS URL واقعی باز کند.",
+              "Mouse flow 2 + 3 = 5 روی Public URL Pass شود.",
+              "Keyboard flow 2 + 3 = 5 Pass شود.",
+              "C/CE/Backspace، Percentage، Division-by-zero recovery Pass شوند.",
+              "Memory، History، Clear History، Theme و Persistence Pass شوند.",
+              "320px و Desktop viewport Public checks Pass شوند.",
+              "هیچ Console Error بحرانی یا Network 404 برای Runtime assetها ثبت نشود.",
+              "Health endpoint در همان run پاسخ 200 بدهد.",
+              "Public E2E evidence بدون Secret/session data نگهداری شود.",
+              "Diff Review انجام و Commit مخصوص S08-W03 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S08-W04",
+            "title": "Monitoring Logs and Rollback Evidence",
+            "weight": 2,
+            "dependsOn": [
+              "S08-W03"
+            ],
+            "objective": "بررسی Nginx Logs، Health behavior و اثبات عملی Rollback بدون از دست‌دادن Release جدید.",
+            "acceptanceCriteria": [
+              "Nginx access log درخواست‌های Public Route و healthz را بدون خطای غیرمنتظره نشان دهد.",
+              "Nginx error log در بازه Deployment فاقد Error بحرانی مرتبط باشد.",
+              "Health check چند بار متوالی پاسخ 200 بدهد.",
+              "Rollback procedure با Release قبلی یا sandbox-equivalent معتبر اثبات شود؛ اگر Release قبلی وجود ندارد، rollback-to-baseline procedure بدون تخریب Production آزمایش و مستند شود.",
+              "پس از Rollback evidence، Production در Release نهایی مورد قبول قرار گیرد و health/public smoke دوباره Pass شود.",
+              "current symlink و deployed SHA نهایی ثبت شوند.",
+              "Logs یا evidence شامل Secret، Cookie یا داده حساس وارد Git نشوند.",
+              "Diff Review انجام و Commit مخصوص S08-W04 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S08-W05",
+            "title": "Final GitHub Sync and Version 1.0.0 Release",
+            "weight": 1,
+            "dependsOn": [
+              "S08-W04"
+            ],
+            "objective": "تطبیق دقیق Production با GitHub و ایجاد Release baseline رسمی نسخه 1.0.0.",
+            "acceptanceCriteria": [
+              "git status قبل از Release فاقد تغییر غیرمنتظره باشد.",
+              "تمام Work Commitهای پروژه روی GitHub Branch مقصد وجود داشته باشند.",
+              "Remote HEAD با Local HEAD موردنظر Release برابر باشد.",
+              "Production deployed source SHA با Release metadata تطبیق داشته باشد.",
+              "Tag v1.0.0 فقط روی Commit پذیرفته‌شده نهایی ایجاد شود.",
+              "Tag به GitHub Push و Remote tag target SHA تأیید شود.",
+              "Release notes شامل Scope نسخه 1، Public URL، Health URL، test summary و rollback reference باشد.",
+              "هیچ Secret، runtime file یا machine-specific artifact در Release commit/tag وجود نداشته باشد.",
+              "Commit/metadata لازم برای S08-W05 ایجاد، Push و Remote SHA تأیید شود."
+            ]
+          },
+          {
+            "id": "S08-W06",
+            "title": "Stage Exit Verification",
+            "weight": 2,
+            "dependsOn": [
+              "S08-W01",
+              "S08-W02",
+              "S08-W03",
+              "S08-W04",
+              "S08-W05"
+            ],
+            "objective": "اجرای Final Acceptance کامل و اثبات اینکه نسخه Production، Nginx، GitHub و تست‌ها همگی روی یک Release نهایی همگام هستند.",
+            "acceptanceCriteria": [
+              "lint و checkJs نهایی Pass شوند.",
+              "QUnit full suite نهایی Pass شود.",
+              "Playwright regression و Public E2E نهایی Pass شوند.",
+              "Responsive checks در 320px، 768px و 1440px Pass شوند.",
+              "Security/CSP checks و source scan Pass شوند.",
+              "nginx -t Pass شود و سرویس Nginx فعال باشد.",
+              "Public URL https://srun.ir/StagePilot/mycalc1/ پاسخ موفق بدهد.",
+              "Health URL https://srun.ir/StagePilot/mycalc1/healthz پاسخ HTTP 200 بدهد.",
+              "HTTP smoke تمام Runtime assetهای اصلی بدون 404 و با Content-Type صحیح را تأیید کند.",
+              "Nginx access/error logs وضعیت سالم پس از Deployment را تأیید کنند.",
+              "Rollback evidence معتبر و قابل بازاجرا باشد.",
+              "هیچ Critical/High defect یا Exception ثبت‌نشده باقی نماند.",
+              "Production deployed SHA، Local HEAD، GitHub Remote HEAD و v1.0.0 tag target با Release record سازگار باشند.",
+              "تمام Commitهای S08 و تمام Stageهای قبلی روی GitHub تأیید شوند.",
+              "Diff نهایی و git status بررسی شوند و هیچ Secret/runtime artifact وجود نداشته باشد.",
+              "Final acceptance evidence شامل test summary، public smoke، health check، Nginx validation، deployed SHA، GitHub SHA و rollback reference ثبت شود.",
+              "Commit مخصوص S08-W06 فقط پس از Pass تمام Gates ایجاد، Push و Remote SHA آن تأیید شود.",
+              "Project completion فقط پس از Pass شدن تمام موارد این Work قابل اعلام است."
+            ]
+          }
+        ],
+        "weight": 5,
+        "objective": "استقرار Artifact تأییدشده روی Production، فعال‌سازی مسیر عمومی و Health Check، اعتبارسنجی HTTPS/Nginx، اجرای Public E2E، بررسی Logs، اثبات Rollback و نهایی‌سازی GitHub Release.",
+        "acceptanceCriteria": [
+          "نسخه تأییدشده روی مسیر عمومی HTTPS در دسترس باشد.",
+          "Nginx validation/reload و Health Check موفق باشند.",
+          "Public E2E و HTTP smoke موفق باشند.",
+          "Monitoring/log verification و rollback evidence ثبت شوند.",
+          "GitHub Remote با نسخه Production همگام باشد.",
+          "تمام Final Acceptance Gates Pass شوند."
+        ]
+      }
+    ],
+    "summary": "ساخت نسخه 1.0 ماشین‌حساب تحت وب شبیه Windows Calculator در Repository با نام mycalc1 با HTML5، Bootstrap 5 RTL، jQuery و JavaScript ماژولار. محصول Runtime کاملاً Static است و Backend، Database سروری، Queue و AI ندارد. برنامه شامل Standard Calculator، چهار عمل اصلی، Decimal، Percentage، Sign Toggle، C/CE/Backspace، Memory، History حداقل 50 مورد، Keyboard، Mouse، Touch، Light/Dark Theme، localStorage، Accessibility، Responsive UI، امنیت CSP-compatible، تست QUnit و Playwright و استقرار نسخه‌بندی‌شده روی Nginx خواهد بود. مسیر عمومی پیش‌فرض بر اساس PUBLIC_SITE_ORIGIN و نام Repository به‌صورت https://srun.ir/StagePilot/mycalc1/ در نظر گرفته شده و پیش از استقرار باید عدم تعارض آن با Route موجود بررسی شود.",
+    "assumptions": [
+      "Repository رسمی پروژه mycalc1 است و Remote GitHub و Branch مقصد پیش از اولین Push از Git config یا StagePilot configuration استخراج می‌شود؛ Branch جدید بدون نیاز ایجاد نمی‌شود.",
+      "PUBLIC_SITE_ORIGIN برابر https://srun.ir/StagePilot است.",
+      "مسیر عمومی پیشنهادی برنامه https://srun.ir/StagePilot/mycalc1/ و Health Check پیشنهادی https://srun.ir/StagePilot/mycalc1/healthz است؛ پیش از اعمال Nginx باید نبود Route conflict تأیید شود.",
+      "اگر Route پیشنهادی با سرویس موجود تعارض داشته باشد، Deployment متوقف می‌شود و Route موجود overwrite نمی‌شود؛ تغییر مسیر فقط به‌عنوان Exception ثبت‌شده قابل انجام است.",
+      "Backend، API، Database Migration و Queue برای نسخه 1 عمداً Not Applicable هستند و نباید صرفاً برای کامل‌کردن معماری ایجاد شوند.",
+      "Node.js فقط برای Development، Test و Playwright مجاز است و Production Runtime به Node.js Application Server وابسته نخواهد بود.",
+      "Bootstrap، jQuery و Bootstrap Icons در Production به‌صورت Local/Vendored و Version-pinned سرو می‌شوند.",
+      "Calculator Engine باید مستقل از DOM باقی بماند و jQuery فقط Interaction/Rendering Layer را مدیریت کند.",
+      "History حداقل 50 نتیجه موفق اخیر را نگهداری می‌کند و Error Result در History موفق ثبت نمی‌شود.",
+      "Percentage، Operator Chaining و Repeated Equals قبل از Freeze شدن Engine به رفتار صریح، مستند و Test Case تبدیل می‌شوند.",
+      "رفتار Floating Point با Formatting کنترل می‌شود و رشته‌های نامناسب IEEE-754 نباید مستقیماً به کاربر نمایش داده شوند.",
+      "هر Work فقط پس از تست، Diff Review، Secret/Runtime File Review، Commit، Push و تأیید Remote SHA کامل تلقی خواهد شد.",
+      "تمام Stageها و Workهای این پاسخ Pending هستند و هیچ موردی در این پاسخ انجام‌شده فرض نمی‌شود."
+    ],
+    "projectName": "ماشین حساب",
+    "technologies": [
+      {
+        "area": "frontend",
+        "choice": "HTML5 + Bootstrap 5 RTL + CSS اختصاصی + jQuery 3.x",
+        "reason": "کاملاً منطبق با Proposal رسمی و مناسب یک Single-page Static Application سبک و Responsive است."
+      },
+      {
+        "area": "calculator-engine",
+        "choice": "JavaScript ماژولار با State Machine اختصاصی و مستقل از DOM",
+        "reason": "رفتار Operand، Operator، Percentage، Repeated Equals، Memory، Error و Formatting را قابل پیش‌بینی و Unit-testable می‌کند."
+      },
+      {
+        "area": "backend",
+        "choice": "None",
+        "reason": "هیچ Requirement نسخه 1 به Server API نیاز ندارد و Runtime باید کاملاً Static باشد."
+      },
+      {
+        "area": "database",
+        "choice": "بدون Database سروری؛ Browser localStorage برای History و Preferences",
+        "reason": "داده‌ها محلی، کم‌حجم و غیرحساس هستند و Cloud Sync خارج از Scope است."
+      },
+      {
+        "area": "queue",
+        "choice": "None",
+        "reason": "Background Job، Worker یا پردازش Async سروری در Scope وجود ندارد."
+      },
+      {
+        "area": "ai",
+        "choice": "None",
+        "reason": "منطق ماشین‌حساب قطعی است و AI در نسخه 1 ارزش عملی ایجاد نمی‌کند."
+      },
+      {
+        "area": "icons",
+        "choice": "Bootstrap Icons به‌صورت Version-pinned و Local/Vendored در Production",
+        "reason": "سبک، هماهنگ با Bootstrap و بدون وابستگی Runtime به CDN است."
+      },
+      {
+        "area": "unit-testing",
+        "choice": "QUnit",
+        "reason": "برای JavaScript سبک و Stack مبتنی بر jQuery مناسب است و Calculator Engine را مستقل از UI تست می‌کند."
+      },
+      {
+        "area": "browser-testing",
+        "choice": "Playwright",
+        "reason": "برای E2E، Keyboard، Responsive Viewport، HTTP/Public URL و Regression Testing مناسب است."
+      },
+      {
+        "area": "quality",
+        "choice": "ESLint + JavaScript checkJs/noEmit در محیط توسعه",
+        "reason": "Lint و بررسی خطاهای ساختاری JavaScript را بدون تبدیل Runtime به TypeScript فراهم می‌کند."
+      },
+      {
+        "area": "security",
+        "choice": "CSP-compatible Static Application بدون eval، new Function، unsafe-eval و Inline Event Handler",
+        "reason": "با الزامات امنیتی Proposal منطبق است و امکان CSP سخت‌گیرانه را حفظ می‌کند."
+      },
+      {
+        "area": "deployment",
+        "choice": "Nginx Static Hosting با Release Directory نسخه‌بندی‌شده و symlink current",
+        "reason": "برای برنامه Static سریع و ساده است و Rollback قابل اثبات را بدون Application Server فراهم می‌کند."
+      },
+      {
+        "area": "observability",
+        "choice": "Automated Test Reports + Browser Console Checks + HTTP Smoke Tests + Nginx Access/Error Logs",
+        "reason": "برای نسخه Static کافی است و Monitoring پیچیده خارج از Scope باقی می‌ماند."
+      },
+      {
+        "area": "version-control",
+        "choice": "Git + GitHub با Commit مستقل برای هر Work و Release Tag",
+        "reason": "Audit، Rollback، StagePilot traceability و تطبیق دقیق Artifact تست‌شده با GitHub را فراهم می‌کند."
+      }
+    ],
+    "schemaVersion": "stagepilot.project-plan.v1"
+  }
+}

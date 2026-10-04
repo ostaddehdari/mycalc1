@@ -1,0 +1,49 @@
+# StagePilot managed repository
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime / persistent local state
+runtime/
+storage/
+.cache/
+tmp/
+temp/
+.config/
+.local/
+.stagepilot-project
+
+# Browser state
+browser-profiles/
+browser-sessions/
+
+# Dependencies / build output
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+dist/
+**/dist/
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Local databases and dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
